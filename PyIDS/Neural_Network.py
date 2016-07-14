@@ -1,15 +1,15 @@
 import numpy as np
 
 class Neural_Network(object):
-    def __init__(self):
-        self.inputLayerSize = 3
-        self.hiddenLayer1Size = 10
-        self.hiddenLayer2Size = 5
-        self.outputLayerSize = 1
+    def __init__(self, inSize, hid1Size, hid2Size, outSize):
+        self.inputLayerSize = inSize
+        self.hiddenLayer1Size = hid1Size
+        self.hiddenLayer2Size = hid2Size
+        self.outputLayerSize = outSize
 
-        self.levelOfTrain = 60000
+        self.levelOfTrain = 10000
 
-        self.MAX = np.array(self.inputLayerSize)
+        self.set_answer_list = []
 
         np.random.seed(1)
 
@@ -18,31 +18,20 @@ class Neural_Network(object):
         self.syn1 = np.random.randn(self.hiddenLayer1Size, self.hiddenLayer2Size)
         self.syn2 = np.random.randn(self.hiddenLayer2Size, self.outputLayerSize)
 
-        self.train()
+    def set_answer_list(self, answerList):
+        self.set_answer_list = answerList
 
     def sigmoid(self, x, deriv = False):
         if(deriv==True):
             return x*(1-x)
         return 1/(1+np.exp(-x))
 
-    def train(self):
+    def train(self, trainingData, trainingAnswers):
         # input dataset
-        X = np.array([  [0,0,5],
-                        [0,2,1],
-                        [3,0,3],
-                        [8,0,1],
-                        [3,1,3],
-                        [2,2,3],
-                        [1,1,7],
-                        [3,1,3],
-                        [3,1,3],
-                        [3,1,3] ])
-
-        self.MAX = np.amax(X, axis = 0)
-        X = X/self.MAX
+        X = trainingData
  
-        # output dataset           
-        y = np.array([[0],[1],[1],[0],[0],[1],[0],[1],[1],[1]])
+        # correct answer dataset           
+        y = trainingAnswers
 
         # train the neural net
         for iter in range(self.levelOfTrain):
@@ -82,12 +71,11 @@ class Neural_Network(object):
             self.syn1 += hidden_layer1.T.dot(hl2_delta)
             self.syn2 += hidden_layer2.T.dot(ol_delta)
 
-        for item in (output_layer):
-            print(round(item[0], 4))
+        return output_layer
 
 
     def compute(self, INPUT):
-        input_layer = INPUT/self.MAX
+        input_layer = INPUT
         hidden_layer1 = self.sigmoid(np.dot(input_layer,self.syn0))
         hidden_layer2 = self.sigmoid(np.dot(hidden_layer1,self.syn1))
         output_layer = self.sigmoid(np.dot(hidden_layer2,self.syn2))
