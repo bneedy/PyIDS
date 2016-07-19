@@ -30,6 +30,11 @@
     </Compile>
     <Compile Include="PyIDS.py" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="dataTypesFile.txt" />
+    <Content Include="tmpMsg1.txt" />
+    <Content Include="tmpMsg2.txt" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>

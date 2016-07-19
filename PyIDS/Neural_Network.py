@@ -1,4 +1,6 @@
 import numpy as np
+import decimal as dec
+from scipy import optimize
 
 class Neural_Network(object):
     def __init__(self, inSize, hid1Size, hid2Size, outSize):
@@ -7,21 +9,26 @@ class Neural_Network(object):
         self.hiddenLayer2Size = hid2Size
         self.outputLayerSize = outSize
 
-        self.levelOfTrain = 10000
+        self.levelOfTrain = 800
 
         self.set_answer_list = []
 
         np.random.seed(1)
 
         # Weights
-        self.syn0 = np.random.randn(self.inputLayerSize, self.hiddenLayer1Size)
-        self.syn1 = np.random.randn(self.hiddenLayer1Size, self.hiddenLayer2Size)
-        self.syn2 = np.random.randn(self.hiddenLayer2Size, self.outputLayerSize)
+        #self.syn0 = np.random.randn(self.inputLayerSize, self.hiddenLayer1Size)
+        #self.syn1 = np.random.randn(self.hiddenLayer1Size, self.hiddenLayer2Size)
+        #self.syn2 = np.random.randn(self.hiddenLayer2Size, self.outputLayerSize)
+
+        self.syn0 = 2*np.random.random((self.inputLayerSize, self.hiddenLayer1Size)) - 1
+        self.syn1 = 2*np.random.random((self.hiddenLayer1Size, self.hiddenLayer2Size)) - 1
+        self.syn2 = 2*np.random.random((self.hiddenLayer2Size, self.outputLayerSize)) - 1
 
     def set_answer_list(self, answerList):
         self.set_answer_list = answerList
 
     def sigmoid(self, x, deriv = False):
+        x = np.around(x, decimals = 8)
         if(deriv==True):
             return x*(1-x)
         return 1/(1+np.exp(-x))
@@ -49,13 +56,11 @@ class Neural_Network(object):
             ol_delta = ol_error * self.sigmoid(output_layer,True)
 
 
-
             # determine hidden layer error value
             hl2_error = ol_delta.dot(self.syn2.T)
 
             # get the slope of the sigmoid at the values in the hidden layer
             hl2_delta = hl2_error * self.sigmoid(hidden_layer2, True)
-
 
 
             # determine hidden layer error value
@@ -64,7 +69,6 @@ class Neural_Network(object):
             # get the slope of the sigmoid at the values in the hidden layer
             hl1_delta = hl1_error * self.sigmoid(hidden_layer1, True)
  
-
 
             # update weights
             self.syn0 += input_layer.T.dot(hl1_delta)
