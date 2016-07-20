@@ -16,6 +16,7 @@ data, answers, ansKey = dr.get_data_array()
 print("Starting Neural Network...")
 nn = NN.Neural_Network(int(data[0].size),14,9,1)
 
+f = open("results_1_new.txt", 'w')
 percent = 0
 while (percent < 90):
     print("Beginning training...")
@@ -24,7 +25,6 @@ while (percent < 90):
     print("Computing small dataset...")
     output = nn.compute(data)
 
-    f = open("results_1.txt", 'w')
     right = 0
     wrong = 0
     for num, item in enumerate(output, 0):
@@ -39,6 +39,7 @@ while (percent < 90):
     f.write("Correct/Total: " + str(right) + "/" + str(right+wrong) + " = " + str(percent) + "%")
     print("Correct/Total: " + str(right) + "/" + str(right+wrong) + " = " + str(percent) + "%")
 
+f.close()
 print("======================================================")
 print("======================================================")
 
@@ -48,7 +49,7 @@ full_data, full_answers, full_ansKey = dr.get_full_data_array()
 print("Computing large dataset...")
 full_output = nn.compute(full_data)
 
-f2 = open("results_2.txt", 'w')
+f2 = open("results_2_new.txt", 'w')
 right = 0
 wrong = 0
 for num, item in enumerate(full_output, 0):

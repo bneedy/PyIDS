@@ -70,8 +70,8 @@ class Data_Reader(object):
                     self.dataArray.append(item)
                     self.answersArray.append([0]) # 0 for good data
                     self.answerKeyArray.append(key)
-            else:
-                for item in self.data[key][:3]:
+            elif key == 'back' or key == 'land' or key == 'neptune' or key == 'pod' or key =='smurf' or key == 'teardown':
+                for item in self.data[key][:11]:
                     self.dataArray.append(item)
                     self.answersArray.append([1]) # 1 for malicious data
                     self.answerKeyArray.append(key)
@@ -112,7 +112,7 @@ class Data_Reader(object):
                     self.fullDataArray.append(item)
                     self.fullAnswersArray.append([0]) # 0 for good data
                     self.fullAnswerKeyArray.append(key)
-            else:
+            elif key == 'back' or key == 'land' or key == 'neptune' or key == 'pod' or key =='smurf' or key == 'teardown':
                 for item in self.data[key]:
                     self.fullDataArray.append(item)
                     self.fullAnswersArray.append([1]) # 1 for malicious data
