@@ -98,3 +98,45 @@ class Data_Reader(object):
                     self.dataArray[lineNum][fieldNum] = float(self.dataArray[lineNum][fieldNum])
     
         return self.normalizeData(np.array(self.dataArray).astype(float)), np.array(self.answersArray).astype(float), self.answerKeyArray
+
+
+    def get_full_data_array(self):
+        self.fullDataArray = []
+        self.fullAnswersArray = []
+        self.fullAnswerKeyArray = []
+
+        # 22 bad types, 1 good
+        for key in list(self.data.keys()):
+            if key == 'normal':
+                for item in self.data[key]:
+                    self.fullDataArray.append(item)
+                    self.fullAnswersArray.append([0]) # 0 for good data
+                    self.fullAnswerKeyArray.append(key)
+            else:
+                for item in self.data[key]:
+                    self.fullDataArray.append(item)
+                    self.fullAnswersArray.append([1]) # 1 for malicious data
+                    self.fullAnswerKeyArray.append(key)
+        
+        # loop over the each line of data
+        for lineNum, line in enumerate(self.fullDataArray, 0):
+
+            # for each line of data get each field and the field number
+            for fieldNum, field in enumerate(line, 0):
+
+                # check if the field is a symbolic field
+                if fieldNum in self.symbolicOptions:
+
+                    # check if that symbol has been added to the symbolic options, if not add it
+                    # and get the value of that symbolic field
+                    if field not in self.symbolicOptions[fieldNum]:
+                        self.symbolicOptions[fieldNum].append(field)
+                        self.fullDataArray[lineNum][fieldNum] = float(self.symbolicOptions[fieldNum].index(field))
+                    else:
+                        self.fullDataArray[lineNum][fieldNum] = float(self.symbolicOptions[fieldNum].index(field))
+
+                # Not symbolic, then just convert to float
+                else:
+                    self.fullDataArray[lineNum][fieldNum] = float(self.fullDataArray[lineNum][fieldNum])
+    
+        return self.normalizeData(np.array(self.fullDataArray).astype(float)), np.array(self.fullAnswersArray).astype(float), self.fullAnswerKeyArray
