@@ -23,7 +23,18 @@ print("Computing...")
 output = nn.compute(data)
 
 f = open("results.txt", 'w')
+right = 0
+wrong = 0
 for num, item in enumerate(output, 0):
     ans = str(answers[num][0])
     f.write("Output: " + str(np.around(item[0], 0)) + " - real: " + str(ans) + " type: " + ansKey[num] + "\n")
     print("Output: " + str(np.around(item[0], 0)) + " - real: " + str(ans) + " type: " + ansKey[num] + "\n")
+    if str(np.around(item[0], 0)) == str(ans):
+        right = right + 1
+    else:
+        wrong = wrong + 1
+
+f.write("Correct/Total: " + str(right) + "/" + str(right+wrong) + " = " + str(np.around(right/(right+wrong) * 100, 2)) + "%")
+print("Correct/Total: " + str(right) + "/" + str(right+wrong) + " = " + str(np.around(right/(right+wrong) * 100, 2)) + "%")
+
+f.close()
