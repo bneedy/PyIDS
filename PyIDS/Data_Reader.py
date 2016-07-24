@@ -51,30 +51,36 @@ class Data_Reader(object):
 
     def normalizeData(self, origData):
         return normalize(origData, axis=1, norm='l1')
-        #newData = origData
-        #for rowNum, row in enumerate(origData, 0):
-        #    for itemNum, item in enumerate(np.amax(origData, axis = 0), 0):
-        #        if item != 0:
-        #            newData[rowNum][itemNum] = origData[rowNum][itemNum]/item
-        #        else:
-        #            newData[rowNum][itemNum] = origData[rowNum][itemNum]
-        #return newData
 
 
-    def get_data_array(self):
+    def get_data_array(self, DOS=False):
 
-        # 22 bad types, 1 good
-        for key in list(self.data.keys()):
-            if key == 'normal':
-                for item in self.data[key][:66]:
-                    self.dataArray.append(item)
-                    self.answersArray.append([0]) # 0 for good data
-                    self.answerKeyArray.append(key)
-            elif key == 'back' or key == 'land' or key == 'neptune' or key == 'pod' or key =='smurf' or key == 'teardown':
-                for item in self.data[key][:11]:
-                    self.dataArray.append(item)
-                    self.answersArray.append([1]) # 1 for malicious data
-                    self.answerKeyArray.append(key)
+        if DOS: # For DOS only messages
+            # 22 bad types, 1 good
+            for key in list(self.data.keys()):
+                if key == 'normal':
+                    for item in self.data[key][:250]:#66
+                        self.dataArray.append(item)
+                        self.answersArray.append([0]) # 0 for good data
+                        self.answerKeyArray.append(key)
+                elif key == 'back' or key == 'land' or key == 'neptune' or key == 'pod' or key =='smurf' or key == 'teardrop':
+                    for item in self.data[key][:18]:#11
+                        self.dataArray.append(item)
+                        self.answersArray.append([1]) # 1 for malicious data
+                        self.answerKeyArray.append(key)
+        else:
+            # 22 bad types, 1 good
+            for key in list(self.data.keys()):
+                if key == 'normal':
+                    for item in self.data[key][:66]:
+                        self.dataArray.append(item)
+                        self.answersArray.append([0]) # 0 for good data
+                        self.answerKeyArray.append(key)
+                else:
+                    for item in self.data[key][:3]:
+                        self.dataArray.append(item)
+                        self.answersArray.append([1]) # 1 for malicious data
+                        self.answerKeyArray.append(key)
         
         # loop over the each line of data
         for lineNum, line in enumerate(self.dataArray, 0):
@@ -100,23 +106,37 @@ class Data_Reader(object):
         return self.normalizeData(np.array(self.dataArray).astype(float)), np.array(self.answersArray).astype(float), self.answerKeyArray
 
 
-    def get_full_data_array(self):
+    def get_full_data_array(self, DOS=False):
         self.fullDataArray = []
         self.fullAnswersArray = []
         self.fullAnswerKeyArray = []
 
-        # 22 bad types, 1 good
-        for key in list(self.data.keys()):
-            if key == 'normal':
-                for item in self.data[key]:
-                    self.fullDataArray.append(item)
-                    self.fullAnswersArray.append([0]) # 0 for good data
-                    self.fullAnswerKeyArray.append(key)
-            elif key == 'back' or key == 'land' or key == 'neptune' or key == 'pod' or key =='smurf' or key == 'teardown':
-                for item in self.data[key]:
-                    self.fullDataArray.append(item)
-                    self.fullAnswersArray.append([1]) # 1 for malicious data
-                    self.fullAnswerKeyArray.append(key)
+        if DOS: # For DOS only messages
+            # 22 bad types, 1 good
+            for key in list(self.data.keys()):
+                if key == 'normal':
+                    for item in self.data[key]:
+                        self.fullDataArray.append(item)
+                        self.fullAnswersArray.append([0]) # 0 for good data
+                        self.fullAnswerKeyArray.append(key)
+                elif key == 'back' or key == 'land' or key == 'neptune' or key == 'pod' or key =='smurf' or key == 'teardrop':
+                    for item in self.data[key]:
+                        self.fullDataArray.append(item)
+                        self.fullAnswersArray.append([1]) # 1 for malicious data
+                        self.fullAnswerKeyArray.append(key)
+        else:
+            # 22 bad types, 1 good
+            for key in list(self.data.keys()):
+                if key == 'normal':
+                    for item in self.data[key]:
+                        self.fullDataArray.append(item)
+                        self.fullAnswersArray.append([0]) # 0 for good data
+                        self.fullAnswerKeyArray.append(key)
+                else:
+                    for item in self.data[key]:
+                        self.fullDataArray.append(item)
+                        self.fullAnswersArray.append([1]) # 1 for malicious data
+                        self.fullAnswerKeyArray.append(key)
         
         # loop over the each line of data
         for lineNum, line in enumerate(self.fullDataArray, 0):
