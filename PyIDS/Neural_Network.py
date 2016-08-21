@@ -7,9 +7,9 @@ class Neural_Network(object):
         self.hiddenLayer2Size = hid2Size
         self.outputLayerSize = outSize
 
-        self.trainingIterations = 800
+        self.trainingIterations = 1000
 
-        np.random.seed(1)
+        #np.random.seed(1)
 
         # Weights
         self.syn0 = 2*np.random.random((self.inputLayerSize, self.hiddenLayer1Size)) - 1
@@ -27,7 +27,7 @@ class Neural_Network(object):
     def train(self, trainingData, trainingAnswers, accuracy=90):
         currentAccuracy = 0
         currentIteration = 0
-        maxIterations = 3
+        maxIterations = 10
 
         # input dataset
         X = trainingData
@@ -89,6 +89,8 @@ class Neural_Network(object):
         
                 total += 1
             currentAccuracy = np.around((correct/(total)) * 100, 2)
+
+            #print("Attempt #" + str(currentIteration) + " - Current Accuracy:" + str(currentAccuracy))
         
         return output_layer
 
