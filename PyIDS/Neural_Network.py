@@ -7,14 +7,22 @@ class Neural_Network(object):
         self.hiddenLayer2Size = hid2Size
         self.outputLayerSize = outSize
 
-        self.trainingIterations = 1000
-
-        #np.random.seed(1)
+        self.trainingIterations = 500
 
         # Weights
         self.syn0 = 2*np.random.random((self.inputLayerSize, self.hiddenLayer1Size)) - 1
         self.syn1 = 2*np.random.random((self.hiddenLayer1Size, self.hiddenLayer2Size)) - 1
         self.syn2 = 2*np.random.random((self.hiddenLayer2Size, self.outputLayerSize)) - 1
+
+    def saveWeights(self):
+        np.save('syn0.weight.npy', self.syn0)
+        np.save('syn1.weight.npy', self.syn1)
+        np.save('syn2.weight.npy', self.syn2)
+
+    def loadWeights(self):
+        self.syn0 = np.load('syn0.weight.npy')
+        self.syn1 = np.load('syn1.weight.npy')
+        self.syn2 = np.load('syn2.weight.npy')
 
 
     def sigmoid(self, x, prime = False):
@@ -27,7 +35,7 @@ class Neural_Network(object):
     def train(self, trainingData, trainingAnswers, accuracy=90):
         currentAccuracy = 0
         currentIteration = 0
-        maxIterations = 10
+        maxIterations = 100
 
         # input dataset
         X = trainingData
@@ -37,6 +45,8 @@ class Neural_Network(object):
 
         # train the neural net until accuracy or max iterations are met
         while currentAccuracy <= accuracy and currentIteration <= maxIterations:
+
+            np.random.seed(currentIteration)
 
             # Reset the weights in case we were in a relative min
             self.syn0 = 2*np.random.random((self.inputLayerSize, self.hiddenLayer1Size)) - 1
@@ -90,7 +100,7 @@ class Neural_Network(object):
                 total += 1
             currentAccuracy = np.around((correct/(total)) * 100, 2)
 
-            #print("Attempt #" + str(currentIteration) + " - Current Accuracy:" + str(currentAccuracy))
+            print("Attempt #" + str(currentIteration) + " - Current Accuracy:" + str(currentAccuracy))
         
         return output_layer
 

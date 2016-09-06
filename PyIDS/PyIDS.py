@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QThread, pyqtSignal
 import Neural_Network as NN
 import Data_Reader as DR
+#from scapy.all import *
 
 class DataReaderWorker(QThread):
     displaySignal = pyqtSignal(str)
@@ -97,8 +98,8 @@ class MainWindow(QWidget):
         self.dataTypesFile = "dataTypesFile.txt"
         self.dataFile = "tmpMsg2.txt"
 
-        self.middleLayerOne = 14
-        self.middleLayerTwo = 9
+        self.middleLayerOne = 12
+        self.middleLayerTwo = 8
         self.outputLayer = 1
 
         self.initUI()
@@ -109,7 +110,7 @@ class MainWindow(QWidget):
 
         self.outputFileLabel = QLabel('Output File:')
         self.outputFileEdit = QLineEdit()
-        self.outputFileEdit.setText('outputFileTESTING.txt')
+        #self.outputFileEdit.setText('outputFileTESTING.txt')
 
         self.initBtn = QPushButton('Init')
         self.initBtn.clicked.connect(self.initDataReader)
@@ -122,6 +123,16 @@ class MainWindow(QWidget):
         self.runBtn.setEnabled(False)
         self.runBtn.clicked.connect(self.runClicked)
 
+        self.saveWeightsBtn = QPushButton('Save Weights')
+        self.saveWeightsBtn.setEnabled(False)
+        self.saveWeightsBtn.hide()
+        self.saveWeightsBtn.clicked.connect(self.saveWeightsClicked)
+
+        self.loadWeightsBtn = QPushButton('Load Weights')
+        self.loadWeightsBtn.setEnabled(False)
+        self.loadWeightsBtn.hide()
+        self.loadWeightsBtn.clicked.connect(self.loadWeightsClicked)
+
         grid = QGridLayout()
         grid.setSpacing(10)
 
@@ -131,9 +142,12 @@ class MainWindow(QWidget):
         grid.addWidget(self.outputFileLabel, 6, 0)
         grid.addWidget(self.outputFileEdit, 6, 1, 1, 4)
 
-        grid.addWidget(self.initBtn, 7, 2)
-        grid.addWidget(self.trainBtn, 7, 3)
-        grid.addWidget(self.runBtn, 7, 4)
+        grid.addWidget(self.saveWeightsBtn, 7, 3)
+        grid.addWidget(self.loadWeightsBtn, 7, 4)
+
+        grid.addWidget(self.initBtn, 8, 2)
+        grid.addWidget(self.trainBtn, 8, 3)
+        grid.addWidget(self.runBtn, 8, 4)
         
         self.setLayout(grid) 
         
@@ -170,10 +184,14 @@ class MainWindow(QWidget):
 
         self.initBtn.setEnabled(False)
         self.trainBtn.setEnabled(True)
+        self.loadWeightsBtn.show()
+        self.loadWeightsBtn.setEnabled(True)
 
     def trainClicked(self):
         self.trainBtn.setEnabled(False)
         self.runBtn.setEnabled(False)
+        self.saveWeightsBtn.setEnabled(False)
+        self.loadWeightsBtn.setEnabled(False)
         self.trainingNeuralThread = NeuralNetworkWorker(self.nn, self.data, self.answers, self.ansKey, self.outputFileEdit.text(), True)
         self.trainingNeuralThread.displaySignal.connect(self.displayText)
         self.trainingNeuralThread.finished.connect(self.finishedNeuralComputing)
@@ -182,14 +200,46 @@ class MainWindow(QWidget):
     def runClicked(self):
         self.trainBtn.setEnabled(False)
         self.runBtn.setEnabled(False)
+        self.saveWeightsBtn.setEnabled(False)
+        self.loadWeightsBtn.setEnabled(False)
         self.neuralThread = NeuralNetworkWorker(self.nn, self.full_data, self.full_answers, self.full_ansKey, self.outputFileEdit.text(), False)
         self.neuralThread.displaySignal.connect(self.displayText)
         self.neuralThread.finished.connect(self.finishedNeuralComputing)
         self.neuralThread.start()
 
+    def saveWeightsClicked(self):
+        self.trainBtn.setEnabled(False)
+        self.runBtn.setEnabled(False)
+        self.saveWeightsBtn.setEnabled(False)
+        self.loadWeightsBtn.setEnabled(False)
+
+        self.nn.saveWeights()
+
+        self.trainBtn.setEnabled(True)
+        self.runBtn.setEnabled(True)
+        self.saveWeightsBtn.setEnabled(True)
+        self.loadWeightsBtn.setEnabled(True)
+
+    def loadWeightsClicked(self):
+        self.trainBtn.setEnabled(False)
+        self.runBtn.setEnabled(False)
+        self.saveWeightsBtn.setEnabled(False)
+        self.loadWeightsBtn.setEnabled(False)
+
+        self.nn.loadWeights()
+
+        self.trainBtn.setEnabled(True)
+        self.runBtn.setEnabled(True)
+        self.saveWeightsBtn.setEnabled(True)
+        self.loadWeightsBtn.setEnabled(True)
+
     def finishedNeuralComputing(self):
         self.trainBtn.setEnabled(True)
         self.runBtn.setEnabled(True)
+        self.saveWeightsBtn.show()
+        self.saveWeightsBtn.setEnabled(True)
+        self.loadWeightsBtn.show()
+        self.loadWeightsBtn.setEnabled(True)
 
     def displayText(self, str):
         item = QListWidgetItem()
@@ -201,7 +251,6 @@ class MainWindow(QWidget):
 
 
 if __name__ == '__main__':
-    
     app = QApplication(sys.argv)
     ex = MainWindow()
     sys.exit(app.exec_())
