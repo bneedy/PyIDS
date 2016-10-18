@@ -5,7 +5,7 @@ service: symbolic.
 flag: symbolic.
 src_bytes: continuous.
 dst_bytes: continuous.
-land: symbolic.
+land: continuous.
 wrong_fragment: continuous.
 urgent: continuous.
 hot: continuous.

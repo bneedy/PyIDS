@@ -25,10 +25,16 @@
     <Compile Include="Data_Reader.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Network_Traffic_Reader.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Neural_Network.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PyIDS.py" />
+    <Compile Include="Recorder.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="dataTypesFile.txt" />

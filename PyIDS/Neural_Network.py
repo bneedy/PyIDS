@@ -33,9 +33,12 @@ class Neural_Network(object):
 
 
     def train(self, trainingData, trainingAnswers, accuracy=90):
+
+        #print(trainingData)
+        
         currentAccuracy = 0
         currentIteration = 0
-        maxIterations = 100
+        maxIterations = 20#100
 
         # input dataset
         X = trainingData

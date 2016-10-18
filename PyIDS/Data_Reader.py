@@ -52,6 +52,40 @@ class Data_Reader(object):
     def normalizeData(self, origData):
         return normalize(origData, axis=1, norm='l1')
 
+    def convertSymbolic(self, data):
+        tmpDataArray = []
+        tmpDataArray.append([])
+
+        # for each line of data get each field and the field number
+        for fieldNum, field in enumerate(data, 0):
+
+            if fieldNum == 0:
+                symFieldNum = 1
+            elif fieldNum == 1:
+                symFieldNum = 3
+            else:
+                symFieldNum = -99
+
+            # check if the field is a symbolic field
+            if symFieldNum in self.symbolicOptions:
+
+                # check if that symbol has been added to the symbolic
+                # options, if not add it
+                # and get the value of that symbolic field
+                if field not in self.symbolicOptions[symFieldNum]:
+                    self.symbolicOptions[symFieldNum].append(field)
+                    fieldVal = float(self.symbolicOptions[symFieldNum].index(field))
+                else:
+                    fieldVal = float(self.symbolicOptions[symFieldNum].index(field))
+
+            # Not symbolic, then just convert to float
+            else:
+                fieldVal = float(data[fieldNum])
+
+            tmpDataArray[0].append(fieldVal)
+    
+        return self.normalizeData(np.array(tmpDataArray).astype(float))
+        #return np.array(tmpDataArray).astype(float)
 
     def get_data_array(self, DOS=False):
 
@@ -59,12 +93,12 @@ class Data_Reader(object):
             # 22 bad types, 1 good
             for key in list(self.data.keys()):
                 if key == 'normal':
-                    for item in self.data[key][:250]:#66
+                    for item in self.data[key][:50]:#66 - 250
                         self.dataArray.append(item)
                         self.answersArray.append([0]) # 0 for good data
                         self.answerKeyArray.append(key)
-                elif key == 'back' or key == 'land' or key == 'neptune' or key == 'pod' or key =='smurf' or key == 'teardrop':
-                    for item in self.data[key][:18]:#11
+                elif key == 'land': #key == 'back' or  or key == 'neptune'  or key == 'teardrop' or key == 'pod' or key =='smurf'
+                    for item in self.data[key][:10]:#11 - 18
                         self.dataArray.append(item)
                         self.answersArray.append([1]) # 1 for malicious data
                         self.answerKeyArray.append(key)
@@ -82,28 +116,38 @@ class Data_Reader(object):
                         self.answersArray.append([1]) # 1 for malicious data
                         self.answerKeyArray.append(key)
         
+        self.newDataArray = []
+
         # loop over the each line of data
         for lineNum, line in enumerate(self.dataArray, 0):
+
+            self.newDataArray.append([])
 
             # for each line of data get each field and the field number
             for fieldNum, field in enumerate(line, 0):
 
-                # check if the field is a symbolic field
-                if fieldNum in self.symbolicOptions:
+                if fieldNum == 1 or fieldNum == 3 or fieldNum == 6: # or fieldnNum == 2
 
-                    # check if that symbol has been added to the symbolic options, if not add it
-                    # and get the value of that symbolic field
-                    if field not in self.symbolicOptions[fieldNum]:
-                        self.symbolicOptions[fieldNum].append(field)
-                        self.dataArray[lineNum][fieldNum] = float(self.symbolicOptions[fieldNum].index(field))
+                    # check if the field is a symbolic field
+                    if fieldNum in self.symbolicOptions:
+
+                        # check if that symbol has been added to the symbolic options, if not add it
+                        # and get the value of that symbolic field
+                        if field not in self.symbolicOptions[fieldNum]:
+                            self.symbolicOptions[fieldNum].append(field)
+                            fieldVal = float(self.symbolicOptions[fieldNum].index(field))
+                        else:
+                            fieldVal = float(self.symbolicOptions[fieldNum].index(field))
+
+                    # Not symbolic, then just convert to float
                     else:
-                        self.dataArray[lineNum][fieldNum] = float(self.symbolicOptions[fieldNum].index(field))
+                        fieldVal = float(self.dataArray[lineNum][fieldNum])
 
-                # Not symbolic, then just convert to float
-                else:
-                    self.dataArray[lineNum][fieldNum] = float(self.dataArray[lineNum][fieldNum])
+                    self.newDataArray[lineNum].append(fieldVal)
     
-        return self.normalizeData(np.array(self.dataArray).astype(float)), np.array(self.answersArray).astype(float), self.answerKeyArray
+        return self.normalizeData(np.array(self.newDataArray).astype(float)), np.array(self.answersArray).astype(float), self.answerKeyArray
+        #return np.array(self.newDataArray).astype(float), np.array(self.answersArray).astype(float), self.answerKeyArray
+
 
 
     def get_full_data_array(self, DOS=False):
@@ -119,7 +163,7 @@ class Data_Reader(object):
                         self.fullDataArray.append(item)
                         self.fullAnswersArray.append([0]) # 0 for good data
                         self.fullAnswerKeyArray.append(key)
-                elif key == 'back' or key == 'land' or key == 'neptune' or key == 'pod' or key =='smurf' or key == 'teardrop':
+                elif key == 'land': #key == 'back' or  or key == 'neptune'  or key == 'teardrop' or key == 'pod' or key =='smurf'
                     for item in self.data[key]:
                         self.fullDataArray.append(item)
                         self.fullAnswersArray.append([1]) # 1 for malicious data
@@ -137,26 +181,34 @@ class Data_Reader(object):
                         self.fullDataArray.append(item)
                         self.fullAnswersArray.append([1]) # 1 for malicious data
                         self.fullAnswerKeyArray.append(key)
+
+        self.newFullDataArray = []
         
         # loop over the each line of data
         for lineNum, line in enumerate(self.fullDataArray, 0):
 
+            self.newFullDataArray.append([])
+
             # for each line of data get each field and the field number
             for fieldNum, field in enumerate(line, 0):
 
-                # check if the field is a symbolic field
-                if fieldNum in self.symbolicOptions:
+                if fieldNum == 1 or fieldNum == 3 or fieldNum == 6: # or fieldnNum == 2
 
-                    # check if that symbol has been added to the symbolic options, if not add it
-                    # and get the value of that symbolic field
-                    if field not in self.symbolicOptions[fieldNum]:
-                        self.symbolicOptions[fieldNum].append(field)
-                        self.fullDataArray[lineNum][fieldNum] = float(self.symbolicOptions[fieldNum].index(field))
+                    # check if the field is a symbolic field
+                    if fieldNum in self.symbolicOptions:
+
+                        # check if that symbol has been added to the symbolic options, if not add it
+                        # and get the value of that symbolic field
+                        if field not in self.symbolicOptions[fieldNum]:
+                            self.symbolicOptions[fieldNum].append(field)
+                            fieldVal = float(self.symbolicOptions[fieldNum].index(field))
+                        else:
+                            fieldVal = float(self.symbolicOptions[fieldNum].index(field))
+
+                    # Not symbolic, then just convert to float
                     else:
-                        self.fullDataArray[lineNum][fieldNum] = float(self.symbolicOptions[fieldNum].index(field))
+                        fieldVal = float(self.fullDataArray[lineNum][fieldNum])
 
-                # Not symbolic, then just convert to float
-                else:
-                    self.fullDataArray[lineNum][fieldNum] = float(self.fullDataArray[lineNum][fieldNum])
+                    self.newFullDataArray[lineNum].append(fieldVal)
     
-        return self.normalizeData(np.array(self.fullDataArray).astype(float)), np.array(self.fullAnswersArray).astype(float), self.fullAnswerKeyArray
+        return self.normalizeData(np.array(self.newFullDataArray).astype(float)), np.array(self.fullAnswersArray).astype(float), self.fullAnswerKeyArray
