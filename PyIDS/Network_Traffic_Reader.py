@@ -29,14 +29,10 @@ class Network_Traffic_Reader(object):
         return self.showData
 
     def recvNextPacket(self):
-        #sc.sniff(filter="ip", prn=lambda x:x.sprintf("{IP:%IP.src% -> %IP.dst%\n}"), timeout=5)
-        #packets = sc.sniff(filter="ip", prn=lambda x:x.show(), timeout=5)
-        #packets = sc.sniff(count=1, prn=lambda x:x.show())
         packets = sniff(count=1, prn=self.parseData)
         self.currentPacket = packets
 
     def parseData(self, pkt):
-        #self.showData = str(bytes(pkt))
         data = ""
 
         ip_src = ""
@@ -54,7 +50,6 @@ class Network_Traffic_Reader(object):
         if TCP in pkt:
             src_port=pkt[TCP].sport
             dst_port=pkt[TCP].dport
-            #flags=str([self.flagsDict[x] for x in pkt.sprintf('%TCP.flags%')])
             flags=str(pkt.sprintf('%TCP.flags%'))
             type = "TCP"
 

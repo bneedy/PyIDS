@@ -88,17 +88,17 @@ class Data_Reader(object):
         #return np.array(tmpDataArray).astype(float)
 
     def get_data_array(self, DOS=False):
-
+        # DOS Types: land, back, neptune, teardrop, pod, smurf
         if DOS: # For DOS only messages
             # 22 bad types, 1 good
             for key in list(self.data.keys()):
                 if key == 'normal':
-                    for item in self.data[key][:50]:#66 - 250
+                    for item in self.data[key][:50]:
                         self.dataArray.append(item)
                         self.answersArray.append([0]) # 0 for good data
                         self.answerKeyArray.append(key)
-                elif key == 'land': #key == 'back' or  or key == 'neptune'  or key == 'teardrop' or key == 'pod' or key =='smurf'
-                    for item in self.data[key][:10]:#11 - 18
+                elif key == 'land':
+                    for item in self.data[key][:10]:
                         self.dataArray.append(item)
                         self.answersArray.append([1]) # 1 for malicious data
                         self.answerKeyArray.append(key)
@@ -146,7 +146,6 @@ class Data_Reader(object):
                     self.newDataArray[lineNum].append(fieldVal)
     
         return self.normalizeData(np.array(self.newDataArray).astype(float)), np.array(self.answersArray).astype(float), self.answerKeyArray
-        #return np.array(self.newDataArray).astype(float), np.array(self.answersArray).astype(float), self.answerKeyArray
 
 
 
