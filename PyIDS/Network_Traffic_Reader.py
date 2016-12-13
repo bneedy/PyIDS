@@ -25,7 +25,8 @@ class Network_Traffic_Reader(object):
         return self.nextPacketData
 
     def getSinglePacket(self):
-        self.recvNextPacket()
+        while self.showData == "":
+            self.recvNextPacket()
         return self.showData
 
     def recvNextPacket(self):

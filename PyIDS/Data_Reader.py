@@ -8,10 +8,13 @@ class Data_Reader(object):
         self.symbolicOptions = {}   # All symbolic option types
         self.data = {}
         self.dataArray = []
+        self.newDataArray = []
+        self.newFullDataArray = []
         self.answersArray = []
         self.answerKeyArray = []
         self.dataTypeFileName = ""
         self.dataFileName = ""
+        self.normalize = False
 
 
     def readDataFiles(self, dataTypeFileName, dataFileName):
@@ -50,7 +53,10 @@ class Data_Reader(object):
 
 
     def normalizeData(self, origData):
-        return normalize(origData, axis=1, norm='l1')
+        if self.normalize:
+            return normalize(origData, axis=1, norm='l1')
+        else:
+            return origData
 
     def convertSymbolic(self, data):
         tmpDataArray = []
@@ -85,20 +91,23 @@ class Data_Reader(object):
             tmpDataArray[0].append(fieldVal)
     
         return self.normalizeData(np.array(tmpDataArray).astype(float))
-        #return np.array(tmpDataArray).astype(float)
 
     def get_data_array(self, DOS=False):
+        self.dataArray = []
+        self.answersArray = []
+        self.answerKeyArray = []
+
         # DOS Types: land, back, neptune, teardrop, pod, smurf
         if DOS: # For DOS only messages
             # 22 bad types, 1 good
             for key in list(self.data.keys()):
                 if key == 'normal':
-                    for item in self.data[key][:50]:
+                    for item in self.data[key][:60]: # 50 - 60 is useful
                         self.dataArray.append(item)
                         self.answersArray.append([0]) # 0 for good data
                         self.answerKeyArray.append(key)
                 elif key == 'land':
-                    for item in self.data[key][:10]:
+                    for item in self.data[key][:30]: # 10 - 30 is useful
                         self.dataArray.append(item)
                         self.answersArray.append([1]) # 1 for malicious data
                         self.answerKeyArray.append(key)

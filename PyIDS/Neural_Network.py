@@ -1,4 +1,5 @@
 import numpy as np
+import h5py
 
 class Neural_Network(object):
     def __init__(self, inSize, hid1Size, hid2Size, outSize):
@@ -14,15 +15,19 @@ class Neural_Network(object):
         self.syn1 = 2*np.random.random((self.hiddenLayer1Size, self.hiddenLayer2Size)) - 1
         self.syn2 = 2*np.random.random((self.hiddenLayer2Size, self.outputLayerSize)) - 1
 
-    def saveWeights(self):
-        np.save('syn0.weight.npy', self.syn0)
-        np.save('syn1.weight.npy', self.syn1)
-        np.save('syn2.weight.npy', self.syn2)
+    def saveWeights(self, filename):
+        h5f = h5py.File(filename, 'w')
+        h5f.create_dataset('syn0', data=self.syn0)
+        h5f.create_dataset('syn1', data=self.syn1)
+        h5f.create_dataset('syn2', data=self.syn2)
+        h5f.close()
 
-    def loadWeights(self):
-        self.syn0 = np.load('syn0.weight.npy')
-        self.syn1 = np.load('syn1.weight.npy')
-        self.syn2 = np.load('syn2.weight.npy')
+    def loadWeights(self, filename):
+        h5f = h5py.File(filename, 'r')
+        self.syn0 = h5f['syn0'][:]
+        self.syn1 = h5f['syn1'][:]
+        self.syn2 = h5f['syn2'][:]
+        h5f.close()
 
 
     def sigmoid(self, x, prime = False):
@@ -33,12 +38,10 @@ class Neural_Network(object):
 
 
     def train(self, trainingData, trainingAnswers, accuracy=90):
-
-        #print(trainingData)
         
         currentAccuracy = 0
         currentIteration = 0
-        maxIterations = 20#100
+        maxIterations = 20
 
         # input dataset
         X = trainingData
@@ -102,8 +105,6 @@ class Neural_Network(object):
         
                 total += 1
             currentAccuracy = np.around((correct/(total)) * 100, 2)
-
-            print("Attempt #" + str(currentIteration) + " - Current Accuracy:" + str(currentAccuracy))
         
         return output_layer
 
@@ -114,4 +115,3 @@ class Neural_Network(object):
         hidden_layer2 = self.sigmoid(np.dot(hidden_layer1,self.syn1))
         output_layer = self.sigmoid(np.dot(hidden_layer2,self.syn2))
         return output_layer
-

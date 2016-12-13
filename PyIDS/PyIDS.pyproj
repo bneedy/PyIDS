@@ -35,6 +35,9 @@
     <Compile Include="Recorder.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UnitTests.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="dataTypesFile.txt" />
